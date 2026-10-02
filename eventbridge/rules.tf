@@ -88,7 +88,7 @@ resource "aws_cloudwatch_event_rule" "guardduty_deleted" {
   description = "CRITICAL: GuardDuty detector was deleted"
 
   event_pattern = jsonencode({
-    source      = ["aws.cloudtrail"]
+    source      = ["aws.guardduty"]
     detail-type = ["AWS API Call via CloudTrail"]
     detail = {
       eventSource = ["guardduty.amazonaws.com"]
