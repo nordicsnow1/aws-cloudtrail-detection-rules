@@ -108,7 +108,7 @@ resource "aws_cloudwatch_event_rule" "iam_admin_policy" {
   description = "CRITICAL: Administrative policy attached to principal"
 
   event_pattern = jsonencode({
-    source      = ["aws.cloudtrail"]
+    source      = ["aws.iam"]
     detail-type = ["AWS API Call via CloudTrail"]
     detail = {
       eventSource = ["iam.amazonaws.com"]
@@ -124,7 +124,7 @@ resource "aws_cloudwatch_event_rule" "iam_inline_policy" {
   description = "HIGH: Inline policy created on principal"
 
   event_pattern = jsonencode({
-    source      = ["aws.cloudtrail"]
+    source      = ["aws.iam"]
     detail-type = ["AWS API Call via CloudTrail"]
     detail = {
       eventSource = ["iam.amazonaws.com"]
@@ -140,7 +140,7 @@ resource "aws_cloudwatch_event_rule" "iam_access_key" {
   description = "HIGH: IAM access key created"
 
   event_pattern = jsonencode({
-    source      = ["aws.cloudtrail"]
+    source      = ["aws.iam"]
     detail-type = ["AWS API Call via CloudTrail"]
     detail = {
       eventSource = ["iam.amazonaws.com"]
@@ -160,7 +160,6 @@ resource "aws_cloudwatch_event_rule" "root_activity" {
   description = "HIGH: Root account API activity detected"
 
   event_pattern = jsonencode({
-    source      = ["aws.cloudtrail"]
     detail-type = ["AWS API Call via CloudTrail"]
     detail = {
       userIdentity = {
@@ -198,7 +197,7 @@ resource "aws_cloudwatch_event_rule" "s3_public" {
   description = "CRITICAL: S3 bucket policy or ACL modified"
 
   event_pattern = jsonencode({
-    source      = ["aws.cloudtrail"]
+    source      = ["aws.s3"]
     detail-type = ["AWS API Call via CloudTrail"]
     detail = {
       eventSource = ["s3.amazonaws.com"]
@@ -214,7 +213,7 @@ resource "aws_cloudwatch_event_rule" "snapshot_shared" {
   description = "CRITICAL: EBS or RDS snapshot sharing modified"
 
   event_pattern = jsonencode({
-    source      = ["aws.cloudtrail"]
+    source      = ["aws.ec2", "aws.rds"]
     detail-type = ["AWS API Call via CloudTrail"]
     detail = {
       eventName = ["ModifySnapshotAttribute", "ModifyDBSnapshotAttribute", "ModifyDBClusterSnapshotAttribute", "ModifyImageAttribute"]
@@ -233,7 +232,7 @@ resource "aws_cloudwatch_event_rule" "kms_key_deletion" {
   description = "CRITICAL: KMS key scheduled for deletion or disabled"
 
   event_pattern = jsonencode({
-    source      = ["aws.cloudtrail"]
+    source      = ["aws.kms"]
     detail-type = ["AWS API Call via CloudTrail"]
     detail = {
       eventSource = ["kms.amazonaws.com"]
@@ -253,7 +252,7 @@ resource "aws_cloudwatch_event_rule" "security_group_change" {
   description = "HIGH: Security group ingress rule modified"
 
   event_pattern = jsonencode({
-    source      = ["aws.cloudtrail"]
+    source      = ["aws.ec2"]
     detail-type = ["AWS API Call via CloudTrail"]
     detail = {
       eventSource = ["ec2.amazonaws.com"]
