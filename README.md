@@ -274,8 +274,8 @@ Best for: Most AWS environments, native integration, low cost (~$0.30/filter/mon
 module "detection_rules" {
   source = "./cloudwatch"
 
-  cloudtrail_log_group = "/aws/cloudtrail/main"
-  sns_topic_arn        = aws_sns_topic.security_alerts.arn
+  cloudtrail_log_group_name = "/aws/cloudtrail/main"
+  sns_topic_arn             = aws_sns_topic.security_alerts.arn
 }
 ```
 

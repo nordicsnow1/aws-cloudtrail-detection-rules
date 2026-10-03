@@ -14,7 +14,7 @@
         "eventSource": "iam.amazonaws.com",
         "eventName": ["PutUserPolicy", "PutRolePolicy", "PutGroupPolicy"],
         "conditions": [
-          "userIdentity.userName equals requestParameters.userName (self-modification)",
+          "userIdentity.userName equals requestParameters.userName (self-modification; check manually: filter patterns cannot compare two fields, and PutRolePolicy/PutGroupPolicy use roleName/groupName)",
           "requestParameters.policyDocument contains 'Action': '*' or 'Action': 'iam:*'"
         ]
       },
