@@ -1,0 +1,10 @@
+{
+  "eventVersion": "1.08",
+  "eventTime": "2026-10-02T12:00:00Z",
+  "eventSource": "cloudtrail.amazonaws.com",
+  "eventName": "StopLogging",
+  "awsRegion": "us-east-1",
+  "sourceIPAddress": "203.0.113.10",
+  "userIdentity": { "type": "IAMUser", "userName": "test-user" },
+  "requestParameters": { "name": "main-trail" }
+}

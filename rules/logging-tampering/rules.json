@@ -152,7 +152,7 @@
       },
       "cloudwatch_filter_pattern": "{ ($.eventSource = \"guardduty.amazonaws.com\") && ($.eventName = \"DeleteDetector\") }",
       "eventbridge_pattern": {
-        "source": ["aws.cloudtrail"],
+        "source": ["aws.guardduty"],
         "detail-type": ["AWS API Call via CloudTrail"],
         "detail": {
           "eventSource": ["guardduty.amazonaws.com"],

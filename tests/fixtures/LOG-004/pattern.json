@@ -1,0 +1,8 @@
+{
+  "source": ["aws.cloudtrail"],
+  "detail-type": ["AWS API Call via CloudTrail"],
+  "detail": {
+    "eventSource": ["guardduty.amazonaws.com"],
+    "eventName": ["DeleteDetector"]
+  }
+}

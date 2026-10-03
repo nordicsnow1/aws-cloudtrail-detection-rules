@@ -17,7 +17,7 @@
       },
       "cloudwatch_filter_pattern": "{ ($.eventSource = \"kms.amazonaws.com\") && ($.eventName = \"ScheduleKeyDeletion\") }",
       "eventbridge_pattern": {
-        "source": ["aws.cloudtrail"],
+        "source": ["aws.kms"],
         "detail-type": ["AWS API Call via CloudTrail"],
         "detail": {
           "eventSource": ["kms.amazonaws.com"],
@@ -62,7 +62,7 @@
       },
       "cloudwatch_filter_pattern": "{ ($.eventSource = \"kms.amazonaws.com\") && ($.eventName = \"DisableKey\") }",
       "eventbridge_pattern": {
-        "source": ["aws.cloudtrail"],
+        "source": ["aws.kms"],
         "detail-type": ["AWS API Call via CloudTrail"],
         "detail": {
           "eventSource": ["kms.amazonaws.com"],
@@ -107,7 +107,7 @@
       },
       "cloudwatch_filter_pattern": "{ ($.eventSource = \"s3.amazonaws.com\") && ($.eventName = \"DeleteBucketEncryption\") }",
       "eventbridge_pattern": {
-        "source": ["aws.cloudtrail"],
+        "source": ["aws.s3"],
         "detail-type": ["AWS API Call via CloudTrail"],
         "detail": {
           "eventSource": ["s3.amazonaws.com"],

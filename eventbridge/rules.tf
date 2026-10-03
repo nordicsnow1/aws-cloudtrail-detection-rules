@@ -88,7 +88,7 @@ resource "aws_cloudwatch_event_rule" "guardduty_deleted" {
   description = "CRITICAL: GuardDuty detector was deleted"
 
   event_pattern = jsonencode({
-    source      = ["aws.cloudtrail"]
+    source      = ["aws.guardduty"]
     detail-type = ["AWS API Call via CloudTrail"]
     detail = {
       eventSource = ["guardduty.amazonaws.com"]
@@ -108,7 +108,7 @@ resource "aws_cloudwatch_event_rule" "iam_admin_policy" {
   description = "CRITICAL: Administrative policy attached to principal"
 
   event_pattern = jsonencode({
-    source      = ["aws.cloudtrail"]
+    source      = ["aws.iam"]
     detail-type = ["AWS API Call via CloudTrail"]
     detail = {
       eventSource = ["iam.amazonaws.com"]
@@ -124,7 +124,7 @@ resource "aws_cloudwatch_event_rule" "iam_inline_policy" {
   description = "HIGH: Inline policy created on principal"
 
   event_pattern = jsonencode({
-    source      = ["aws.cloudtrail"]
+    source      = ["aws.iam"]
     detail-type = ["AWS API Call via CloudTrail"]
     detail = {
       eventSource = ["iam.amazonaws.com"]
@@ -140,7 +140,7 @@ resource "aws_cloudwatch_event_rule" "iam_access_key" {
   description = "HIGH: IAM access key created"
 
   event_pattern = jsonencode({
-    source      = ["aws.cloudtrail"]
+    source      = ["aws.iam"]
     detail-type = ["AWS API Call via CloudTrail"]
     detail = {
       eventSource = ["iam.amazonaws.com"]
@@ -160,7 +160,6 @@ resource "aws_cloudwatch_event_rule" "root_activity" {
   description = "HIGH: Root account API activity detected"
 
   event_pattern = jsonencode({
-    source      = ["aws.cloudtrail"]
     detail-type = ["AWS API Call via CloudTrail"]
     detail = {
       userIdentity = {
@@ -180,6 +179,7 @@ resource "aws_cloudwatch_event_rule" "root_login" {
     source      = ["aws.signin"]
     detail-type = ["AWS Console Sign In via CloudTrail"]
     detail = {
+      eventName = ["ConsoleLogin"]
       userIdentity = {
         type = ["Root"]
       }
@@ -195,14 +195,14 @@ resource "aws_cloudwatch_event_rule" "root_login" {
 
 resource "aws_cloudwatch_event_rule" "s3_public" {
   name        = "${var.name_prefix}-s3-public-access"
-  description = "CRITICAL: S3 bucket policy or ACL modified"
+  description = "CRITICAL: S3 bucket policy or ACL set"
 
   event_pattern = jsonencode({
-    source      = ["aws.cloudtrail"]
+    source      = ["aws.s3"]
     detail-type = ["AWS API Call via CloudTrail"]
     detail = {
       eventSource = ["s3.amazonaws.com"]
-      eventName   = ["PutBucketPolicy", "PutBucketAcl", "DeleteBucketPolicy"]
+      eventName   = ["PutBucketPolicy", "PutBucketAcl"]
     }
   })
 
@@ -214,10 +214,11 @@ resource "aws_cloudwatch_event_rule" "snapshot_shared" {
   description = "CRITICAL: EBS or RDS snapshot sharing modified"
 
   event_pattern = jsonencode({
-    source      = ["aws.cloudtrail"]
+    source      = ["aws.ec2", "aws.rds"]
     detail-type = ["AWS API Call via CloudTrail"]
     detail = {
-      eventName = ["ModifySnapshotAttribute", "ModifyDBSnapshotAttribute", "ModifyDBClusterSnapshotAttribute", "ModifyImageAttribute"]
+      eventSource = ["ec2.amazonaws.com", "rds.amazonaws.com"]
+      eventName   = ["ModifySnapshotAttribute", "ModifyDBSnapshotAttribute", "ModifyDBClusterSnapshotAttribute", "ModifyImageAttribute"]
     }
   })
 
@@ -233,7 +234,7 @@ resource "aws_cloudwatch_event_rule" "kms_key_deletion" {
   description = "CRITICAL: KMS key scheduled for deletion or disabled"
 
   event_pattern = jsonencode({
-    source      = ["aws.cloudtrail"]
+    source      = ["aws.kms"]
     detail-type = ["AWS API Call via CloudTrail"]
     detail = {
       eventSource = ["kms.amazonaws.com"]
@@ -253,11 +254,11 @@ resource "aws_cloudwatch_event_rule" "security_group_change" {
   description = "HIGH: Security group ingress rule modified"
 
   event_pattern = jsonencode({
-    source      = ["aws.cloudtrail"]
+    source      = ["aws.ec2"]
     detail-type = ["AWS API Call via CloudTrail"]
     detail = {
       eventSource = ["ec2.amazonaws.com"]
-      eventName   = ["AuthorizeSecurityGroupIngress", "AuthorizeSecurityGroupEgress"]
+      eventName   = ["AuthorizeSecurityGroupIngress"]
     }
   })
 
@@ -388,6 +389,91 @@ resource "aws_cloudwatch_event_target" "kms_deletion" {
   }
 }
 
+resource "aws_cloudwatch_event_target" "iam_inline_policy" {
+  rule      = aws_cloudwatch_event_rule.iam_inline_policy.name
+  target_id = "send-to-sns"
+  arn       = var.sns_topic_arn
+
+  input_transformer {
+    input_paths = {
+      account   = "$.detail.userIdentity.accountId"
+      actor     = "$.detail.userIdentity.arn"
+      event     = "$.detail.eventName"
+      source_ip = "$.detail.sourceIPAddress"
+      time      = "$.detail.eventTime"
+    }
+    input_template = "\"🚨 CRITICAL: IAM Inline Policy Changed\\n\\nAccount: <account>\\nActor: <actor>\\nAction: <event>\\nSource IP: <source_ip>\\nTime: <time>\""
+  }
+}
+
+resource "aws_cloudwatch_event_target" "iam_access_key" {
+  rule      = aws_cloudwatch_event_rule.iam_access_key.name
+  target_id = "send-to-sns"
+  arn       = var.sns_topic_arn
+
+  input_transformer {
+    input_paths = {
+      account   = "$.detail.userIdentity.accountId"
+      actor     = "$.detail.userIdentity.arn"
+      event     = "$.detail.eventName"
+      source_ip = "$.detail.sourceIPAddress"
+      time      = "$.detail.eventTime"
+    }
+    input_template = "\"⚠️ HIGH: IAM Access Key Created\\n\\nAccount: <account>\\nActor: <actor>\\nAction: <event>\\nSource IP: <source_ip>\\nTime: <time>\""
+  }
+}
+
+resource "aws_cloudwatch_event_target" "root_login" {
+  rule      = aws_cloudwatch_event_rule.root_login.name
+  target_id = "send-to-sns"
+  arn       = var.sns_topic_arn
+
+  input_transformer {
+    input_paths = {
+      account   = "$.detail.userIdentity.accountId"
+      actor     = "$.detail.userIdentity.arn"
+      event     = "$.detail.eventName"
+      source_ip = "$.detail.sourceIPAddress"
+      time      = "$.detail.eventTime"
+    }
+    input_template = "\"⚠️ HIGH: Root Console Login\\n\\nAccount: <account>\\nActor: <actor>\\nAction: <event>\\nSource IP: <source_ip>\\nTime: <time>\""
+  }
+}
+
+resource "aws_cloudwatch_event_target" "snapshot_shared" {
+  rule      = aws_cloudwatch_event_rule.snapshot_shared.name
+  target_id = "send-to-sns"
+  arn       = var.sns_topic_arn
+
+  input_transformer {
+    input_paths = {
+      account   = "$.detail.userIdentity.accountId"
+      actor     = "$.detail.userIdentity.arn"
+      event     = "$.detail.eventName"
+      source_ip = "$.detail.sourceIPAddress"
+      time      = "$.detail.eventTime"
+    }
+    input_template = "\"🚨 CRITICAL: Snapshot or Image Sharing Changed\\n\\nAccount: <account>\\nActor: <actor>\\nAction: <event>\\nSource IP: <source_ip>\\nTime: <time>\""
+  }
+}
+
+resource "aws_cloudwatch_event_target" "security_group_change" {
+  rule      = aws_cloudwatch_event_rule.security_group_change.name
+  target_id = "send-to-sns"
+  arn       = var.sns_topic_arn
+
+  input_transformer {
+    input_paths = {
+      account   = "$.detail.userIdentity.accountId"
+      actor     = "$.detail.userIdentity.arn"
+      event     = "$.detail.eventName"
+      source_ip = "$.detail.sourceIPAddress"
+      time      = "$.detail.eventTime"
+    }
+    input_template = "\"⚠️ HIGH: Security Group Changed\\n\\nAccount: <account>\\nActor: <actor>\\nAction: <event>\\nSource IP: <source_ip>\\nTime: <time>\""
+  }
+}
+
 # -----------------------------------------------------------------------------
 # SNS TOPIC POLICY (Allow EventBridge to publish)
 # -----------------------------------------------------------------------------
@@ -396,12 +482,12 @@ data "aws_iam_policy_document" "sns_topic_policy" {
   statement {
     sid    = "AllowEventBridgePublish"
     effect = "Allow"
-    
+
     principals {
       type        = "Service"
       identifiers = ["events.amazonaws.com"]
     }
-    
+
     actions   = ["sns:Publish"]
     resources = [var.sns_topic_arn]
   }

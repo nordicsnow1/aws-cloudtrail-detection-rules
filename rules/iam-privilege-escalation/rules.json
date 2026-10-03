@@ -12,19 +12,19 @@
       },
       "detection": {
         "eventSource": "iam.amazonaws.com",
-        "eventName": ["PutUserPolicy", "PutRolePolicy"],
+        "eventName": ["PutUserPolicy", "PutRolePolicy", "PutGroupPolicy"],
         "conditions": [
           "userIdentity.userName equals requestParameters.userName (self-modification)",
           "requestParameters.policyDocument contains 'Action': '*' or 'Action': 'iam:*'"
         ]
       },
-      "cloudwatch_filter_pattern": "{ ($.eventSource = \"iam.amazonaws.com\") && (($.eventName = \"PutUserPolicy\") || ($.eventName = \"PutRolePolicy\")) }",
+      "cloudwatch_filter_pattern": "{ ($.eventSource = \"iam.amazonaws.com\") && (($.eventName = \"PutUserPolicy\") || ($.eventName = \"PutRolePolicy\") || ($.eventName = \"PutGroupPolicy\")) }",
       "eventbridge_pattern": {
-        "source": ["aws.cloudtrail"],
+        "source": ["aws.iam"],
         "detail-type": ["AWS API Call via CloudTrail"],
         "detail": {
           "eventSource": ["iam.amazonaws.com"],
-          "eventName": ["PutUserPolicy", "PutRolePolicy"]
+          "eventName": ["PutUserPolicy", "PutRolePolicy", "PutGroupPolicy"]
         }
       },
       "false_positives": [
@@ -62,12 +62,12 @@
         "eventSource": "iam.amazonaws.com",
         "eventName": ["CreateAccessKey"],
         "conditions": [
-          "userIdentity.userName does NOT equal requestParameters.userName"
+          "userIdentity.userName does NOT equal requestParameters.userName (check manually: filter patterns cannot compare two fields)"
         ]
       },
-      "cloudwatch_filter_pattern": "{ ($.eventSource = \"iam.amazonaws.com\") && ($.eventName = \"CreateAccessKey\") && ($.userIdentity.userName != $.requestParameters.userName) }",
+      "cloudwatch_filter_pattern": "{ ($.eventSource = \"iam.amazonaws.com\") && ($.eventName = \"CreateAccessKey\") }",
       "eventbridge_pattern": {
-        "source": ["aws.cloudtrail"],
+        "source": ["aws.iam"],
         "detail-type": ["AWS API Call via CloudTrail"],
         "detail": {
           "eventSource": ["iam.amazonaws.com"],
@@ -116,7 +116,7 @@
       },
       "cloudwatch_filter_pattern": "{ ($.eventSource = \"iam.amazonaws.com\") && (($.eventName = \"AttachUserPolicy\") || ($.eventName = \"AttachRolePolicy\") || ($.eventName = \"AttachGroupPolicy\")) && (($.requestParameters.policyArn = \"*AdministratorAccess*\") || ($.requestParameters.policyArn = \"*IAMFullAccess*\") || ($.requestParameters.policyArn = \"*PowerUserAccess*\")) }",
       "eventbridge_pattern": {
-        "source": ["aws.cloudtrail"],
+        "source": ["aws.iam"],
         "detail-type": ["AWS API Call via CloudTrail"],
         "detail": {
           "eventSource": ["iam.amazonaws.com"],
@@ -163,7 +163,7 @@
       },
       "cloudwatch_filter_pattern": "{ ($.eventSource = \"iam.amazonaws.com\") && ($.eventName = \"CreatePolicyVersion\") && ($.requestParameters.setAsDefault IS TRUE) }",
       "eventbridge_pattern": {
-        "source": ["aws.cloudtrail"],
+        "source": ["aws.iam"],
         "detail-type": ["AWS API Call via CloudTrail"],
         "detail": {
           "eventSource": ["iam.amazonaws.com"],
@@ -211,7 +211,7 @@
       },
       "cloudwatch_filter_pattern": "{ ($.eventSource = \"iam.amazonaws.com\") && ($.eventName = \"CreateLoginProfile\") }",
       "eventbridge_pattern": {
-        "source": ["aws.cloudtrail"],
+        "source": ["aws.iam"],
         "detail-type": ["AWS API Call via CloudTrail"],
         "detail": {
           "eventSource": ["iam.amazonaws.com"],
