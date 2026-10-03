@@ -20,7 +20,7 @@
       },
       "cloudwatch_filter_pattern": "{ ($.eventSource = \"iam.amazonaws.com\") && (($.eventName = \"PutUserPolicy\") || ($.eventName = \"PutRolePolicy\")) }",
       "eventbridge_pattern": {
-        "source": ["aws.cloudtrail"],
+        "source": ["aws.iam"],
         "detail-type": ["AWS API Call via CloudTrail"],
         "detail": {
           "eventSource": ["iam.amazonaws.com"],
@@ -67,7 +67,7 @@
       },
       "cloudwatch_filter_pattern": "{ ($.eventSource = \"iam.amazonaws.com\") && ($.eventName = \"CreateAccessKey\") && ($.userIdentity.userName != $.requestParameters.userName) }",
       "eventbridge_pattern": {
-        "source": ["aws.cloudtrail"],
+        "source": ["aws.iam"],
         "detail-type": ["AWS API Call via CloudTrail"],
         "detail": {
           "eventSource": ["iam.amazonaws.com"],
@@ -116,7 +116,7 @@
       },
       "cloudwatch_filter_pattern": "{ ($.eventSource = \"iam.amazonaws.com\") && (($.eventName = \"AttachUserPolicy\") || ($.eventName = \"AttachRolePolicy\") || ($.eventName = \"AttachGroupPolicy\")) && (($.requestParameters.policyArn = \"*AdministratorAccess*\") || ($.requestParameters.policyArn = \"*IAMFullAccess*\") || ($.requestParameters.policyArn = \"*PowerUserAccess*\")) }",
       "eventbridge_pattern": {
-        "source": ["aws.cloudtrail"],
+        "source": ["aws.iam"],
         "detail-type": ["AWS API Call via CloudTrail"],
         "detail": {
           "eventSource": ["iam.amazonaws.com"],
@@ -163,7 +163,7 @@
       },
       "cloudwatch_filter_pattern": "{ ($.eventSource = \"iam.amazonaws.com\") && ($.eventName = \"CreatePolicyVersion\") && ($.requestParameters.setAsDefault IS TRUE) }",
       "eventbridge_pattern": {
-        "source": ["aws.cloudtrail"],
+        "source": ["aws.iam"],
         "detail-type": ["AWS API Call via CloudTrail"],
         "detail": {
           "eventSource": ["iam.amazonaws.com"],
@@ -211,7 +211,7 @@
       },
       "cloudwatch_filter_pattern": "{ ($.eventSource = \"iam.amazonaws.com\") && ($.eventName = \"CreateLoginProfile\") }",
       "eventbridge_pattern": {
-        "source": ["aws.cloudtrail"],
+        "source": ["aws.iam"],
         "detail-type": ["AWS API Call via CloudTrail"],
         "detail": {
           "eventSource": ["iam.amazonaws.com"],

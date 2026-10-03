@@ -20,7 +20,7 @@
       },
       "cloudwatch_filter_pattern": "{ ($.eventSource = \"s3.amazonaws.com\") && ($.eventName = \"PutBucketPolicy\") }",
       "eventbridge_pattern": {
-        "source": ["aws.cloudtrail"],
+        "source": ["aws.s3"],
         "detail-type": ["AWS API Call via CloudTrail"],
         "detail": {
           "eventSource": ["s3.amazonaws.com"],
@@ -68,7 +68,7 @@
       },
       "cloudwatch_filter_pattern": "{ ($.eventSource = \"s3.amazonaws.com\") && ($.eventName = \"PutBucketAcl\") }",
       "eventbridge_pattern": {
-        "source": ["aws.cloudtrail"],
+        "source": ["aws.s3"],
         "detail-type": ["AWS API Call via CloudTrail"],
         "detail": {
           "eventSource": ["s3.amazonaws.com"],
@@ -115,7 +115,7 @@
       },
       "cloudwatch_filter_pattern": "{ ($.eventSource = \"ec2.amazonaws.com\") && ($.eventName = \"ModifySnapshotAttribute\") }",
       "eventbridge_pattern": {
-        "source": ["aws.cloudtrail"],
+        "source": ["aws.ec2"],
         "detail-type": ["AWS API Call via CloudTrail"],
         "detail": {
           "eventSource": ["ec2.amazonaws.com"],
@@ -163,7 +163,7 @@
       },
       "cloudwatch_filter_pattern": "{ ($.eventSource = \"ec2.amazonaws.com\") && ($.eventName = \"ModifyImageAttribute\") }",
       "eventbridge_pattern": {
-        "source": ["aws.cloudtrail"],
+        "source": ["aws.ec2"],
         "detail-type": ["AWS API Call via CloudTrail"],
         "detail": {
           "eventSource": ["ec2.amazonaws.com"],
@@ -211,7 +211,7 @@
       },
       "cloudwatch_filter_pattern": "{ ($.eventSource = \"rds.amazonaws.com\") && (($.eventName = \"ModifyDBSnapshotAttribute\") || ($.eventName = \"ModifyDBClusterSnapshotAttribute\")) }",
       "eventbridge_pattern": {
-        "source": ["aws.cloudtrail"],
+        "source": ["aws.rds"],
         "detail-type": ["AWS API Call via CloudTrail"],
         "detail": {
           "eventSource": ["rds.amazonaws.com"],

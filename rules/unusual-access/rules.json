@@ -19,7 +19,6 @@
       },
       "cloudwatch_filter_pattern": "{ ($.userIdentity.type = \"Root\") && ($.eventName != \"ConsoleLogin\") }",
       "eventbridge_pattern": {
-        "source": ["aws.cloudtrail"],
         "detail-type": ["AWS API Call via CloudTrail"],
         "detail": {
           "userIdentity": {
@@ -219,7 +218,6 @@
       },
       "cloudwatch_filter_pattern": "{ ($.errorCode = \"*UnauthorizedAccess*\") || ($.errorCode = \"AccessDenied*\") || ($.errorCode = \"*AccessDeniedException*\") }",
       "eventbridge_pattern": {
-        "source": ["aws.cloudtrail"],
         "detail-type": ["AWS API Call via CloudTrail"],
         "detail": {
           "errorCode": ["UnauthorizedAccess", "AccessDenied", "AccessDeniedException", "Client.UnauthorizedAccess"]

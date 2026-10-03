@@ -20,7 +20,7 @@
       },
       "cloudwatch_filter_pattern": "{ ($.eventSource = \"ec2.amazonaws.com\") && ($.eventName = \"AuthorizeSecurityGroupIngress\") }",
       "eventbridge_pattern": {
-        "source": ["aws.cloudtrail"],
+        "source": ["aws.ec2"],
         "detail-type": ["AWS API Call via CloudTrail"],
         "detail": {
           "eventSource": ["ec2.amazonaws.com"],
@@ -79,7 +79,7 @@
       },
       "cloudwatch_filter_pattern": "{ ($.eventSource = \"ec2.amazonaws.com\") && ($.eventName = \"AuthorizeSecurityGroupIngress\") }",
       "eventbridge_pattern": {
-        "source": ["aws.cloudtrail"],
+        "source": ["aws.ec2"],
         "detail-type": ["AWS API Call via CloudTrail"],
         "detail": {
           "eventSource": ["ec2.amazonaws.com"],
@@ -123,7 +123,7 @@
       },
       "cloudwatch_filter_pattern": "{ ($.eventSource = \"ec2.amazonaws.com\") && ($.eventName = \"DeleteSecurityGroup\") }",
       "eventbridge_pattern": {
-        "source": ["aws.cloudtrail"],
+        "source": ["aws.ec2"],
         "detail-type": ["AWS API Call via CloudTrail"],
         "detail": {
           "eventSource": ["ec2.amazonaws.com"],
