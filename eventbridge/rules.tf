@@ -20,7 +20,7 @@ terraform {
 # -----------------------------------------------------------------------------
 
 variable "sns_topic_arn" {
-  description = "ARN of the SNS topic for security alerts"
+  description = "ARN of the SNS topic for security alerts. This module replaces the topic policy, so use a dedicated topic."
   type        = string
 }
 
@@ -478,6 +478,10 @@ resource "aws_cloudwatch_event_target" "security_group_change" {
 # SNS TOPIC POLICY (Allow EventBridge to publish)
 # -----------------------------------------------------------------------------
 
+data "aws_partition" "current" {}
+data "aws_region" "current" {}
+data "aws_caller_identity" "current" {}
+
 data "aws_iam_policy_document" "sns_topic_policy" {
   statement {
     sid    = "AllowEventBridgePublish"
@@ -490,7 +494,21 @@ data "aws_iam_policy_document" "sns_topic_policy" {
 
     actions   = ["sns:Publish"]
     resources = [var.sns_topic_arn]
+
+    # Only rules created by this module may publish (confused deputy protection)
+    condition {
+      test     = "ArnLike"
+      variable = "aws:SourceArn"
+      values = [
+        "arn:${data.aws_partition.current.partition}:events:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:rule/${var.name_prefix}-*"
+      ]
+    }
   }
+}
+
+resource "aws_sns_topic_policy" "eventbridge_publish" {
+  arn    = var.sns_topic_arn
+  policy = data.aws_iam_policy_document.sns_topic_policy.json
 }
 
 # -----------------------------------------------------------------------------
