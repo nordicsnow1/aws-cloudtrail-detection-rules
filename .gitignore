@@ -2,3 +2,10 @@ tests/params.json
 __pycache__/
 .terraform/
 .pytest_cache/
+
+# Terraform state and variables can contain account IDs, ARNs and secrets
+*.tfstate
+*.tfstate.*
+*.tfvars
+*.tfvars.json
+crash.log
