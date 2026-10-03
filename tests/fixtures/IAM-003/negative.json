@@ -1,0 +1,34 @@
+{
+  "version": "0",
+  "id": "11111111-2222-3333-4444-000000000022",
+  "detail-type": "AWS API Call via CloudTrail",
+  "source": "aws.iam",
+  "account": "123456789012",
+  "time": "2026-10-02T12:00:00Z",
+  "region": "us-east-1",
+  "resources": [],
+  "detail": {
+    "eventVersion": "1.08",
+    "userIdentity": {
+      "type": "IAMUser",
+      "principalId": "AIDAEXAMPLE",
+      "arn": "arn:aws:iam::123456789012:user/test-user",
+      "accountId": "123456789012",
+      "userName": "test-user"
+    },
+    "eventTime": "2026-10-02T12:00:00Z",
+    "eventSource": "iam.amazonaws.com",
+    "eventName": "DetachUserPolicy",
+    "awsRegion": "us-east-1",
+    "sourceIPAddress": "203.0.113.10",
+    "userAgent": "aws-cli/2.0",
+    "requestParameters": {
+      "userName": "test-user",
+      "policyArn": "arn:aws:iam::aws:policy/AdministratorAccess"
+    },
+    "responseElements": null,
+    "eventType": "AwsApiCall",
+    "managementEvent": true,
+    "recipientAccountId": "123456789012"
+  }
+}
