@@ -177,7 +177,7 @@ resource "aws_cloudwatch_event_rule" "root_login" {
 
   event_pattern = jsonencode({
     source      = ["aws.signin"]
-    detail-type = ["AWS Console Sign In via CloudTrail"]
+    detail-type = ["AWS Console Sign In via CloudTrail", "AWS Console Signin via CloudTrail"]
     detail = {
       eventName = ["ConsoleLogin"]
       userIdentity = {
