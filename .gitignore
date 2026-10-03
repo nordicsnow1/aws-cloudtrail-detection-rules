@@ -1,2 +1,3 @@
 tests/params.json
 __pycache__/
+.terraform/
