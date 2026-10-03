@@ -387,6 +387,91 @@ resource "aws_cloudwatch_event_target" "kms_deletion" {
   }
 }
 
+resource "aws_cloudwatch_event_target" "iam_inline_policy" {
+  rule      = aws_cloudwatch_event_rule.iam_inline_policy.name
+  target_id = "send-to-sns"
+  arn       = var.sns_topic_arn
+
+  input_transformer {
+    input_paths = {
+      account   = "$.detail.userIdentity.accountId"
+      actor     = "$.detail.userIdentity.arn"
+      event     = "$.detail.eventName"
+      source_ip = "$.detail.sourceIPAddress"
+      time      = "$.detail.eventTime"
+    }
+    input_template = "\"🚨 CRITICAL: IAM Inline Policy Changed\\n\\nAccount: <account>\\nActor: <actor>\\nAction: <event>\\nSource IP: <source_ip>\\nTime: <time>\""
+  }
+}
+
+resource "aws_cloudwatch_event_target" "iam_access_key" {
+  rule      = aws_cloudwatch_event_rule.iam_access_key.name
+  target_id = "send-to-sns"
+  arn       = var.sns_topic_arn
+
+  input_transformer {
+    input_paths = {
+      account   = "$.detail.userIdentity.accountId"
+      actor     = "$.detail.userIdentity.arn"
+      event     = "$.detail.eventName"
+      source_ip = "$.detail.sourceIPAddress"
+      time      = "$.detail.eventTime"
+    }
+    input_template = "\"⚠️ HIGH: IAM Access Key Created\\n\\nAccount: <account>\\nActor: <actor>\\nAction: <event>\\nSource IP: <source_ip>\\nTime: <time>\""
+  }
+}
+
+resource "aws_cloudwatch_event_target" "root_login" {
+  rule      = aws_cloudwatch_event_rule.root_login.name
+  target_id = "send-to-sns"
+  arn       = var.sns_topic_arn
+
+  input_transformer {
+    input_paths = {
+      account   = "$.detail.userIdentity.accountId"
+      actor     = "$.detail.userIdentity.arn"
+      event     = "$.detail.eventName"
+      source_ip = "$.detail.sourceIPAddress"
+      time      = "$.detail.eventTime"
+    }
+    input_template = "\"⚠️ HIGH: Root Console Login\\n\\nAccount: <account>\\nActor: <actor>\\nAction: <event>\\nSource IP: <source_ip>\\nTime: <time>\""
+  }
+}
+
+resource "aws_cloudwatch_event_target" "snapshot_shared" {
+  rule      = aws_cloudwatch_event_rule.snapshot_shared.name
+  target_id = "send-to-sns"
+  arn       = var.sns_topic_arn
+
+  input_transformer {
+    input_paths = {
+      account   = "$.detail.userIdentity.accountId"
+      actor     = "$.detail.userIdentity.arn"
+      event     = "$.detail.eventName"
+      source_ip = "$.detail.sourceIPAddress"
+      time      = "$.detail.eventTime"
+    }
+    input_template = "\"🚨 CRITICAL: Snapshot or Image Sharing Changed\\n\\nAccount: <account>\\nActor: <actor>\\nAction: <event>\\nSource IP: <source_ip>\\nTime: <time>\""
+  }
+}
+
+resource "aws_cloudwatch_event_target" "security_group_change" {
+  rule      = aws_cloudwatch_event_rule.security_group_change.name
+  target_id = "send-to-sns"
+  arn       = var.sns_topic_arn
+
+  input_transformer {
+    input_paths = {
+      account   = "$.detail.userIdentity.accountId"
+      actor     = "$.detail.userIdentity.arn"
+      event     = "$.detail.eventName"
+      source_ip = "$.detail.sourceIPAddress"
+      time      = "$.detail.eventTime"
+    }
+    input_template = "\"⚠️ HIGH: Security Group Changed\\n\\nAccount: <account>\\nActor: <actor>\\nAction: <event>\\nSource IP: <source_ip>\\nTime: <time>\""
+  }
+}
+
 # -----------------------------------------------------------------------------
 # SNS TOPIC POLICY (Allow EventBridge to publish)
 # -----------------------------------------------------------------------------
