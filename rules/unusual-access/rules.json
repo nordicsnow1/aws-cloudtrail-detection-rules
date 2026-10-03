@@ -68,7 +68,7 @@
       "cloudwatch_filter_pattern": "{ ($.eventSource = \"signin.amazonaws.com\") && ($.eventName = \"ConsoleLogin\") && ($.additionalEventData.MFAUsed = \"No\") && ($.responseElements.ConsoleLogin = \"Success\") }",
       "eventbridge_pattern": {
         "source": ["aws.signin"],
-        "detail-type": ["AWS Console Sign In via CloudTrail"],
+        "detail-type": ["AWS Console Sign In via CloudTrail", "AWS Console Signin via CloudTrail"],
         "detail": {
           "eventName": ["ConsoleLogin"],
           "additionalEventData": {
@@ -120,7 +120,7 @@
       "cloudwatch_filter_pattern": "{ ($.eventSource = \"signin.amazonaws.com\") && ($.eventName = \"ConsoleLogin\") && ($.userIdentity.type = \"Root\") }",
       "eventbridge_pattern": {
         "source": ["aws.signin"],
-        "detail-type": ["AWS Console Sign In via CloudTrail"],
+        "detail-type": ["AWS Console Sign In via CloudTrail", "AWS Console Signin via CloudTrail"],
         "detail": {
           "eventName": ["ConsoleLogin"],
           "userIdentity": {
@@ -170,7 +170,7 @@
       "cloudwatch_filter_pattern": "{ ($.eventSource = \"signin.amazonaws.com\") && ($.eventName = \"ConsoleLogin\") && ($.responseElements.ConsoleLogin = \"Failure\") }",
       "eventbridge_pattern": {
         "source": ["aws.signin"],
-        "detail-type": ["AWS Console Sign In via CloudTrail"],
+        "detail-type": ["AWS Console Sign In via CloudTrail", "AWS Console Signin via CloudTrail"],
         "detail": {
           "eventName": ["ConsoleLogin"],
           "responseElements": {
