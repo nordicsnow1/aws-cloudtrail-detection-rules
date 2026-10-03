@@ -58,7 +58,7 @@ locals {
     iam_self_escalation = {
       name        = "IAM-001-Self-Escalation-Inline-Policy"
       description = "Detects self-attached inline policies with wildcard permissions"
-      pattern     = "{ ($.eventSource = \"iam.amazonaws.com\") && (($.eventName = \"PutUserPolicy\") || ($.eventName = \"PutRolePolicy\")) }"
+      pattern     = "{ ($.eventSource = \"iam.amazonaws.com\") && (($.eventName = \"PutUserPolicy\") || ($.eventName = \"PutRolePolicy\") || ($.eventName = \"PutGroupPolicy\")) }"
       severity    = "CRITICAL"
     }
     iam_cross_identity_key = {
@@ -70,13 +70,13 @@ locals {
     iam_admin_policy_attach = {
       name        = "IAM-003-Admin-Policy-Attachment"
       description = "Detects administrative policy attachments"
-      pattern     = "{ ($.eventSource = \"iam.amazonaws.com\") && (($.eventName = \"AttachUserPolicy\") || ($.eventName = \"AttachRolePolicy\") || ($.eventName = \"AttachGroupPolicy\")) }"
+      pattern     = "{ ($.eventSource = \"iam.amazonaws.com\") && (($.eventName = \"AttachUserPolicy\") || ($.eventName = \"AttachRolePolicy\") || ($.eventName = \"AttachGroupPolicy\")) && (($.requestParameters.policyArn = \"*AdministratorAccess*\") || ($.requestParameters.policyArn = \"*IAMFullAccess*\") || ($.requestParameters.policyArn = \"*PowerUserAccess*\")) }"
       severity    = "CRITICAL"
     }
     iam_policy_version = {
       name        = "IAM-004-Policy-Version-Escalation"
       description = "Detects new policy versions set as default"
-      pattern     = "{ ($.eventSource = \"iam.amazonaws.com\") && ($.eventName = \"CreatePolicyVersion\") }"
+      pattern     = "{ ($.eventSource = \"iam.amazonaws.com\") && ($.eventName = \"CreatePolicyVersion\") && ($.requestParameters.setAsDefault IS TRUE) }"
       severity    = "HIGH"
     }
     iam_console_access = {
@@ -114,7 +114,7 @@ locals {
     access_denied = {
       name        = "ACCESS-005-Unauthorized-API-Calls"
       description = "Detects access denied errors"
-      pattern     = "{ ($.errorCode = \"*UnauthorizedAccess*\") || ($.errorCode = \"AccessDenied*\") }"
+      pattern     = "{ ($.errorCode = \"*UnauthorizedOperation\") || ($.errorCode = \"AccessDenied*\") }"
       severity    = "MEDIUM"
     }
 

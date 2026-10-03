@@ -213,14 +213,14 @@
         "eventSource": "any",
         "eventName": "any",
         "conditions": [
-          "errorCode equals 'UnauthorizedAccess' OR 'AccessDenied' OR 'AccessDeniedException'"
+          "errorCode ends with 'UnauthorizedOperation' OR starts with 'AccessDenied'"
         ]
       },
-      "cloudwatch_filter_pattern": "{ ($.errorCode = \"*UnauthorizedAccess*\") || ($.errorCode = \"AccessDenied*\") || ($.errorCode = \"*AccessDeniedException*\") }",
+      "cloudwatch_filter_pattern": "{ ($.errorCode = \"*UnauthorizedOperation\") || ($.errorCode = \"AccessDenied*\") }",
       "eventbridge_pattern": {
         "detail-type": ["AWS API Call via CloudTrail"],
         "detail": {
-          "errorCode": ["UnauthorizedAccess", "AccessDenied", "AccessDeniedException", "Client.UnauthorizedAccess"]
+          "errorCode": [{"suffix": "UnauthorizedOperation"}, {"prefix": "AccessDenied"}]
         }
       },
       "false_positives": [

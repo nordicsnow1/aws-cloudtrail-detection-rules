@@ -179,6 +179,7 @@ resource "aws_cloudwatch_event_rule" "root_login" {
     source      = ["aws.signin"]
     detail-type = ["AWS Console Sign In via CloudTrail"]
     detail = {
+      eventName = ["ConsoleLogin"]
       userIdentity = {
         type = ["Root"]
       }
@@ -194,14 +195,14 @@ resource "aws_cloudwatch_event_rule" "root_login" {
 
 resource "aws_cloudwatch_event_rule" "s3_public" {
   name        = "${var.name_prefix}-s3-public-access"
-  description = "CRITICAL: S3 bucket policy or ACL modified"
+  description = "CRITICAL: S3 bucket policy or ACL set"
 
   event_pattern = jsonencode({
     source      = ["aws.s3"]
     detail-type = ["AWS API Call via CloudTrail"]
     detail = {
       eventSource = ["s3.amazonaws.com"]
-      eventName   = ["PutBucketPolicy", "PutBucketAcl", "DeleteBucketPolicy"]
+      eventName   = ["PutBucketPolicy", "PutBucketAcl"]
     }
   })
 
@@ -216,7 +217,8 @@ resource "aws_cloudwatch_event_rule" "snapshot_shared" {
     source      = ["aws.ec2", "aws.rds"]
     detail-type = ["AWS API Call via CloudTrail"]
     detail = {
-      eventName = ["ModifySnapshotAttribute", "ModifyDBSnapshotAttribute", "ModifyDBClusterSnapshotAttribute", "ModifyImageAttribute"]
+      eventSource = ["ec2.amazonaws.com", "rds.amazonaws.com"]
+      eventName   = ["ModifySnapshotAttribute", "ModifyDBSnapshotAttribute", "ModifyDBClusterSnapshotAttribute", "ModifyImageAttribute"]
     }
   })
 
@@ -256,7 +258,7 @@ resource "aws_cloudwatch_event_rule" "security_group_change" {
     detail-type = ["AWS API Call via CloudTrail"]
     detail = {
       eventSource = ["ec2.amazonaws.com"]
-      eventName   = ["AuthorizeSecurityGroupIngress", "AuthorizeSecurityGroupEgress"]
+      eventName   = ["AuthorizeSecurityGroupIngress"]
     }
   })
 
@@ -480,12 +482,12 @@ data "aws_iam_policy_document" "sns_topic_policy" {
   statement {
     sid    = "AllowEventBridgePublish"
     effect = "Allow"
-    
+
     principals {
       type        = "Service"
       identifiers = ["events.amazonaws.com"]
     }
-    
+
     actions   = ["sns:Publish"]
     resources = [var.sns_topic_arn]
   }
